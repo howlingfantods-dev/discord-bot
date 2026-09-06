@@ -45,6 +45,10 @@ async def on_ready():
         from .infocard import scheduler as infocard_scheduler
         bot.loop.create_task(infocard_scheduler(bot))
 
+    # register the restart-safe wave button on join messages
+    from .welcome import register as welcome_register
+    welcome_register(bot)
+
     # fair-access cooldown system (tracked rooms + admin panel)
     fairaccess_start(bot)
 

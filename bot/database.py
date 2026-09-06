@@ -225,6 +225,17 @@ def db_init():
         )
         """)
 
+        # One row per waver per join message, so the button counts people
+        # rather than clicks.
+        conn.execute("""
+        CREATE TABLE IF NOT EXISTS welcome_waves (
+          message_id INTEGER NOT NULL,
+          user_id    INTEGER NOT NULL,
+          waved_at   INTEGER NOT NULL,
+          PRIMARY KEY (message_id, user_id)
+        )
+        """)
+
         # One row per person, ever. A leave-and-rejoin must not re-trigger the
         # welcome, so this outlives their membership by design.
         conn.execute("""
@@ -921,6 +932,19 @@ def codeforces_cache_get(ref: str) -> dict | None:
         return {"ref": r[0], "contest_id": r[1], "index": r[2], "name": r[3],
                 "rating": r[4], "tags": [t for t in (r[5] or "").split(",") if t],
                 "contest_name": r[6]}
+
+
+def welcome_wave_add(message_id: int, user_id: int) -> int | None:
+    """Record a wave. Returns the new wave count, or None if they'd already waved."""
+    with _db() as conn:
+        cur = conn.execute(
+            "INSERT OR IGNORE INTO welcome_waves(message_id, user_id, waved_at) "
+            "VALUES(?,?,?)", (message_id, user_id, int(time.time())))
+        if not cur.rowcount:
+            return None
+        conn.commit()
+        return conn.execute("SELECT COUNT(*) FROM welcome_waves WHERE message_id=?",
+                            (message_id,)).fetchone()[0]
 
 
 def welcome_claim(user_id: int) -> bool:

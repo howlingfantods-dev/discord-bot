@@ -122,11 +122,10 @@ STREAM_ALERT_TEXT = os.getenv("STREAM_ALERT_TEXT", "")
 # row up front is how someone is exempted from ever getting one.
 WELCOME_CHANNEL_ID = int(os.getenv("WELCOME_CHANNEL_ID") or "1390402158364594188")  # #general
 WELCOME_TEXT = os.getenv("WELCOME_TEXT") or "{mention} just joined."
-# Seeded on the join line so waving is one click. Comma-separated if more than
-# one is ever wanted; empty seeds nothing and leaves a bare line.
-WELCOME_REACTIONS = [e.strip() for e in (
-    os.getenv("WELCOME_REACTIONS") or "<:hi:1544773008609116282>"
-).split(",") if e.strip()]
+# The wave button. Its icon is an EMOJI — Discord buttons can't carry a sticker.
+# The click count rides on the label, since a bot can't react for someone else.
+WELCOME_BUTTON_LABEL = os.getenv("WELCOME_BUTTON_LABEL") or "Wave to say hi!"
+WELCOME_BUTTON_EMOJI = os.getenv("WELCOME_BUTTON_EMOJI") or "<:hi:1544773008609116282>"
 
 # ---------------- Twitch bot console (outbound control API) ----------------
 # Shared secret with the Twitch bot; must match its CONSOLE_SECRET. Never logged.
