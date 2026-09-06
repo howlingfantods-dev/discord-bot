@@ -117,10 +117,14 @@ TWITCH_CHANNEL_URL = f"https://twitch.tv/{STREAMER_NAME}"
 STREAM_ALERT_TEXT = os.getenv("STREAM_ALERT_TEXT", "")
 
 # ---------------- Join message ----------------
-# Our own join line, since Discord's built-in one can't be reworded. One per
-# person ever (the `welcomed` table), so rejoining is silent — and claiming a
-# row up front is how someone is exempted from ever getting one.
-WELCOME_CHANNEL_ID = int(os.getenv("WELCOME_CHANNEL_ID") or "1390402158364594188")  # #general
+# OFF: joins are Discord's own "Good to see you, X." with its wave sticker
+# button, enabled via the guild's system channel (#general) and its
+# SUPPRESS_JOIN_NOTIFICATION* flags — not something the bot posts.
+#
+# Set a channel id to bring ours back instead. It posts WELCOME_TEXT with a
+# wave button counting on its label, once per person ever (the `welcomed`
+# table); claiming a row up front is how someone is exempted.
+WELCOME_CHANNEL_ID = int(os.getenv("WELCOME_CHANNEL_ID") or "0")
 WELCOME_TEXT = os.getenv("WELCOME_TEXT") or "{mention} just joined."
 # The wave button. Its icon is an EMOJI — Discord buttons can't carry a sticker.
 # The click count rides on the label, since a bot can't react for someone else.
