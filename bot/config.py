@@ -133,9 +133,7 @@ WELCOME_BUTTON_EMOJI = os.getenv("WELCOME_BUTTON_EMOJI") or "<:hi:15447730086091
 # A sticker to post per wave. Buttons can't DISPLAY a sticker — Discord allows
 # only an emoji there — so this costs a message per wave, which is the whole
 # trade against the count-on-the-label version. 0 keeps the count instead.
-# Currently one of Discord's free standard stickers, as a stand-in until a
-# server sticker is uploaded (0 of 15 slots used).
-WELCOME_STICKER_ID = int(os.getenv("WELCOME_STICKER_ID") or "749054660769218631")
+WELCOME_STICKER_ID = int(os.getenv("WELCOME_STICKER_ID") or "0")
 
 # ---------------- Twitch bot console (outbound control API) ----------------
 # Shared secret with the Twitch bot; must match its CONSOLE_SECRET. Never logged.
