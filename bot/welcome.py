@@ -19,6 +19,7 @@ from .config import (
     WELCOME_BUTTON_EMOJI,
     WELCOME_BUTTON_LABEL,
     WELCOME_CHANNEL_ID,
+    WELCOME_STICKER_ID,
     WELCOME_TEXT,
 )
 from .database import welcome_claim, welcome_release, welcome_wave_add
@@ -66,11 +67,32 @@ class WaveButton(discord.ui.DynamicItem[discord.ui.Button], template=_TEMPLATE):
             await interaction.response.send_message("You've already waved.", ephemeral=True)
             return
 
+        if WELCOME_STICKER_ID and await self._send_sticker(interaction):
+            return
+
         # Edit in place: the tally belongs on the button, not in a new message.
         self.item.label = _label(count)
         view = discord.ui.View(timeout=None)
         view.add_item(self)
         await interaction.response.edit_message(view=view)
+
+    async def _send_sticker(self, interaction: discord.Interaction) -> bool:
+        """Post the wave as a sticker, replying to the join line.
+
+        The bot sends it, not the waver — there's no API to act as someone
+        else — so the message has to name them or nobody can tell who waved.
+        False falls back to the label count rather than losing the wave.
+        """
+        try:
+            sticker = await interaction.client.fetch_sticker(WELCOME_STICKER_ID)
+            await interaction.response.send_message(
+                f"{interaction.user.mention} waved", stickers=[sticker],
+                reference=interaction.message,
+                allowed_mentions=discord.AllowedMentions.none())
+            return True
+        except Exception as e:
+            log_error(f"[WELCOME] sticker {WELCOME_STICKER_ID} unusable: {e!r}")
+            return False
 
 
 async def post(bot, member) -> bool:
